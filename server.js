@@ -1,26 +1,33 @@
+//MODULES
+// express imported in to node
 const express = require('express')
+//create an express app
 const app = express()
+//connects to mongo db
 const MongoClient = require('mongodb').MongoClient
+//establishes a local port on port 2121
 const PORT = 2121
+// allows ou to bring your hidden variables?
 require('dotenv').config()
 
-
-let db,
-    dbConnectionStr = process.env.DB_STRING,
-    dbName = 'todo'
+//MIDDLEWARE
+let db, //db contains the functions to interact to the db
+    dbConnectionStr = process.env.DB_STRING, //creates the string to onnect o the db (points to the db)
+    dbName = 'todo' // name of the database 
 
 MongoClient.connect(dbConnectionStr, { useUnifiedTopology: true })
     .then(client => {
         console.log(`Connected to ${dbName} Database`)
         db = client.db(dbName)
-    })
+    })// connects to the database using the variables you declared in the lines above (13-15)
     
-app.set('view engine', 'ejs')
-app.use(express.static('public'))
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.set('view engine', 'ejs')//set the engine for the visualization (templates)
+app.use(express.static('public'))//uses the folder public
+app.use(express.urlencoded({ extended: true }))//uses encoded url (middleware to clean how things are displayed)
+app.use(express.json())//using json
 
 
+//ROUTES
 app.get('/',async (request, response)=>{
     const todoItems = await db.collection('todos').find().toArray()
     const itemsLeft = await db.collection('todos').countDocuments({completed: false})
@@ -34,6 +41,7 @@ app.get('/',async (request, response)=>{
     // })
     // .catch(error => console.error(error))
 })
+// defines the get endpoint for the api
 
 app.post('/addTodo', (request, response) => {
     db.collection('todos').insertOne({thing: request.body.todoItem, completed: false})
