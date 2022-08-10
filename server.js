@@ -6,6 +6,7 @@ const app = express()
 //connects to mongo db
 const MongoClient = require('mongodb').MongoClient
 //establishes a local port on port 2121
+
 const PORT = 2121
 // allows ou to bring your hidden variables?
 require('dotenv').config()
@@ -32,7 +33,7 @@ app.get('/',async (request, response)=>{
     const todoItems = await db.collection('todos').find().toArray()
     const itemsLeft = await db.collection('todos').countDocuments({completed: false})
     response.render('index.ejs', { items: todoItems, left: itemsLeft })
-    // db.collection('todos').find().toArray()
+    // db.collection('todos').find().toArray() //db. holding the db connection
     // .then(data => {
     //     db.collection('todos').countDocuments({completed: false})
     //     .then(itemsLeft => {
@@ -98,4 +99,4 @@ app.delete('/deleteItem', (request, response) => {
 
 app.listen(process.env.PORT || PORT, ()=>{
     console.log(`Server running on port ${PORT}`)
-})
+})//starts listenning for requests from the port configured before (2121)
